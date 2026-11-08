@@ -5,7 +5,7 @@ import { toPaginated } from "../utils/pagination.js";
 
 export const userService = {
   async getAll(pagination: PaginationQuery): Promise<Paginated<PublicUser>> {
-    const [users, total] = await userRepository.getPage(pagination);
+    const [users, total] = await userRepository.getAll(pagination);
 
     return toPaginated(users, total, pagination);
   },

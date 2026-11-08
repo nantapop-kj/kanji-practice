@@ -4,7 +4,7 @@ import { PasswordInput } from "@/components/PasswordInput";
 import { Spinner } from "@/components/Spinner";
 import { useAuth } from "@/contexts/AuthContext";
 import { useI18n, type TKey } from "@/i18n";
-import { authErrorMessage } from "@/lib/auth-error";
+import { apiErrorMessage } from "@/lib/api-error";
 import { Paths } from "@/routes/paths";
 import "./LoginPage.css";
 
@@ -84,7 +84,7 @@ export const LoginPage = () => {
       const from = (location.state as { from?: Location } | null)?.from;
       navigate(from ? from.pathname + from.search : Paths.quiz, { replace: true });
     } catch (err) {
-      setError(authErrorMessage(err, t));
+      setError(apiErrorMessage(err, t));
       setLoading(false);
     }
   };

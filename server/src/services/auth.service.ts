@@ -9,6 +9,8 @@ import { signToken, verifyToken } from "../utils/jwt.js";
 
 const BcryptCost = 12;
 
+const toAuthUser = ({ id, email, name, role }: AuthUser): AuthUser => ({ id, email, name, role });
+
 const isUniqueViolation = (err: unknown): boolean =>
   typeof err === "object" && err !== null && "code" in err && err.code === "P2002";
 
@@ -23,7 +25,7 @@ export const authService = {
     try {
       const user = await userRepository.create({ email, passwordHash, name });
 
-      return { user: user, token: signToken(user.id) };
+      return { user: toAuthUser(user), token: signToken(user.id) };
     } catch (err) {
       if (isUniqueViolation(err)) {
         throw new HttpError(HttpStatus.Conflict, ErrorCode.EmailTaken, "Email is already registered");
@@ -41,7 +43,7 @@ export const authService = {
       throw new HttpError(HttpStatus.Unauthorized, ErrorCode.InvalidCredentials, "Email or password is incorrect");
     }
 
-    return { user: user, token: signToken(user.id) };
+    return { user: toAuthUser(user), token: signToken(user.id) };
   },
 
   async getUserFromToken(token: string): Promise<AuthUser | null> {
@@ -50,6 +52,6 @@ export const authService = {
 
     const user = await userRepository.getById(userId);
 
-    return user;
+    return user ? toAuthUser(user) : null;
   },
 };

@@ -33,4 +33,11 @@ export enum LogEvent {
   AuthForbidden = "auth.forbidden",
   UserList = "user.list",
   UserListFailed = "user.list_failed",
+  WordCreate = "word.create",
+  WordCreateFailed = "word.create_failed",
+  WordUpdate = "word.update",
+  WordUpdateFailed = "word.update_failed",
+  WordDelete = "word.delete",
+  WordDeleteFailed = "word.delete_failed",
+  WordListFailed = "word.list_failed",
 }

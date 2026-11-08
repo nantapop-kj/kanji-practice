@@ -4,7 +4,7 @@ import type { PublicUser } from "../types/auth.js";
 import type { PaginationQuery } from "../types/pagination.js";
 
 export const userRepository = {
-  getPage: ({ page, pageSize }: PaginationQuery): Promise<[PublicUser[], number]> =>
+  getAll: ({ page, pageSize }: PaginationQuery): Promise<[PublicUser[], number]> =>
     prisma.$transaction([
       prisma.user.findMany({
         omit: { passwordHash: true },

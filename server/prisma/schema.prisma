@@ -14,6 +14,37 @@ enum Role {
   @@map("role")
 }
 
+enum QuestionType {
+  read
+  mean
+
+  @@map("question_type")
+}
+
+enum AnswerMode {
+  choice
+  typing
+
+  @@map("answer_mode")
+}
+
+enum Lang {
+  th
+  en
+
+  @@map("lang")
+}
+
+enum JlptLevel {
+  N5
+  N4
+  N3
+  N2
+  N1
+
+  @@map("jlpt_level")
+}
+
 model User {
   id           String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   email        String   @unique @db.VarChar(254)
@@ -25,5 +56,64 @@ model User {
   updatedAt    DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(3)
   updatedBy    String?  @map("updated_by") @db.VarChar(255)
 
+  stats      UserWordStat[]
+  answerLogs AnswerLog[]
+
   @@map("users")
+}
+
+model Word {
+  id         Int       @id @default(autoincrement())
+  kanji      String    @db.VarChar(255)
+  reading    String    @db.VarChar(255)
+  meaningsTh String[]  @default([]) @map("meanings_th") @db.VarChar(255)
+  meaningsEn String[]  @default([]) @map("meanings_en") @db.VarChar(255)
+  level      JlptLevel @default(N5)
+  createdBy  String?   @map("created_by") @db.VarChar(255)
+  createdAt  DateTime  @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt  DateTime  @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(3)
+  updatedBy  String?   @map("updated_by") @db.VarChar(255)
+
+  stats      UserWordStat[]
+  answerLogs AnswerLog[]
+
+  @@unique([kanji, reading])
+  @@index([level])
+  @@map("words")
+}
+
+model UserWordStat {
+  userId         String       @map("user_id") @db.Uuid
+  wordId         Int          @map("word_id")
+  qtype          QuestionType
+  correctCount   Int          @default(0) @map("correct_count")
+  wrongCount     Int          @default(0) @map("wrong_count")
+  lastCorrect    Boolean?     @map("last_correct")
+  lastAnsweredAt DateTime?    @map("last_answered_at") @db.Timestamptz(3)
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  word Word @relation(fields: [wordId], references: [id], onDelete: Cascade)
+
+  @@id([userId, wordId, qtype])
+  @@map("user_word_stats")
+}
+
+model AnswerLog {
+  id         BigInt       @id @default(autoincrement())
+  userId     String       @map("user_id") @db.Uuid
+  wordId     Int          @map("word_id")
+  qtype      QuestionType
+  mode       AnswerMode
+  lang       Lang         @default(th)
+  given      String       @db.VarChar(255)
+  isCorrect  Boolean      @map("is_correct")
+  overridden Boolean      @default(false)
+  createdAt  DateTime     @default(now()) @map("created_at") @db.Timestamptz(3)
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  word Word @relation(fields: [wordId], references: [id], onDelete: Cascade)
+
+  @@index([userId, createdAt(sort: Desc)])
+  @@index([userId, wordId, qtype, createdAt(sort: Desc)])
+  @@map("answer_logs")
 }
