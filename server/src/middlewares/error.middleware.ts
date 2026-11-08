@@ -1,8 +1,9 @@
 import type { NextFunction, Request, Response } from "express";
+import { errorMeta, logger } from "../config/logger.js";
 import { ErrorCode, HttpStatus } from "../constants/http.js";
 import { HttpError } from "../utils/http-error.js";
 
-export const errorHandler = (err: unknown, _req: Request, res: Response, next: NextFunction): void => {
+export const errorHandler = (err: unknown, req: Request, res: Response, next: NextFunction): void => {
   if (res.headersSent) return next(err);
 
   if (err instanceof HttpError) {
@@ -22,7 +23,11 @@ export const errorHandler = (err: unknown, _req: Request, res: Response, next: N
     return;
   }
 
-  console.error(err);
+  (req.log ?? logger).error(`Unhandled error on ${req.method} ${req.originalUrl.split("?")[0]}`, {
+    error: errorMeta(err),
+    userId: req.user?.id,
+  });
+
   res
     .status(HttpStatus.InternalServerError)
     .json({ error: { code: ErrorCode.InternalError, message: "Something went wrong" } });

@@ -1,23 +1,29 @@
 import type { NextFunction, Request, RequestHandler, Response } from "express";
 import type { Role } from "../generated/prisma/client.js";
 import { ErrorCode, HttpStatus } from "../constants/http.js";
+import { LogEvent } from "../constants/log.js";
 import { authService } from "../services/auth.service.js";
 import { AuthCookie } from "../utils/auth-cookie.js";
 import { HttpError } from "../utils/http-error.js";
+import { logFailure } from "../utils/log.js";
+
+const unauthorized = (req: Request, message: string): HttpError =>
+  logFailure(
+    req,
+    LogEvent.AuthUnauthorized,
+    "Authentication failed",
+    new HttpError(HttpStatus.Unauthorized, ErrorCode.Unauthorized, message),
+  );
 
 export const requireAuth = async (req: Request, _res: Response, next: NextFunction): Promise<void> => {
   const token: unknown = req.cookies?.[AuthCookie];
   if (typeof token !== "string") {
-    throw new HttpError(HttpStatus.Unauthorized, ErrorCode.Unauthorized, "Authentication required");
+    throw unauthorized(req, "Authentication required");
   }
 
   const user = await authService.getUserFromToken(token);
   if (!user) {
-    throw new HttpError(
-      HttpStatus.Unauthorized,
-      ErrorCode.Unauthorized,
-      "Your session is invalid or has expired. Please log in again",
-    );
+    throw unauthorized(req, "Your session is invalid or has expired. Please log in again");
   }
 
   req.user = user;
@@ -28,11 +34,16 @@ export const requireRole =
   (...roles: Role[]): RequestHandler =>
     (req: Request, _res: Response, next: NextFunction): void => {
       if (!req.user) {
-        throw new HttpError(HttpStatus.Unauthorized, ErrorCode.Unauthorized, "You must be logged in to access this resource");
+        throw unauthorized(req, "You must be logged in to access this resource");
       }
 
       if (!roles.includes(req.user.role)) {
-        throw new HttpError(HttpStatus.Forbidden, ErrorCode.Forbidden, "Your account does not have permission to access this resource");
+        throw logFailure(
+          req,
+          LogEvent.AuthForbidden,
+          "Access denied",
+          new HttpError(HttpStatus.Forbidden, ErrorCode.Forbidden, "Your account does not have permission to access this resource"),
+        );
       }
 
       next();

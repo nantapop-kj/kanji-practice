@@ -17,6 +17,7 @@ export enum ErrorCode {
   InternalError = "INTERNAL_ERROR",
   Unauthorized = "UNAUTHORIZED",
   Forbidden = "FORBIDDEN",
+  NotFound = "NOT_FOUND",
   InvalidCredentials = "INVALID_CREDENTIALS",
   EmailTaken = "EMAIL_TAKEN",
   EmailRequired = "EMAIL_REQUIRED",
