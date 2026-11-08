@@ -178,11 +178,11 @@ Server console in `dev`:
 
 ## 📚 Vocabulary Data
 
-`server/prisma/sample-data.sql` contains 4,050 words:
+`server/prisma/sample-data.sql` contains 1,250 words, 250 per level:
 
 | Level | N5 | N4 | N3 | N2 | N1 |
 |---|---|---|---|---|---|
-| Words | 200 | 250 | 600 | 1,000 | 2,000 |
+| Words | 250 | 250 | 250 | 250 | 250 |
 
 **Sources of the words, readings, English meanings, and JLPT levels**
 - [open-anki-jlpt-decks](https://github.com/jamsinclair/open-anki-jlpt-decks) by Jamie Sinclair, MIT License (Copyright © 2020 Jamie Sinclair)
@@ -190,7 +190,8 @@ Server console in `dev`:
 
 **What this project added**
 - Thai meanings, written for this project. They have not been reviewed by a Japanese language expert.
-- Only words that contain kanji, picked evenly across each list.
+- Only words that contain kanji, with the level taken from the source list.
+- Common everyday words first, then words picked evenly across each list.
 - Fixes to the source data, such as readings with `する` attached, misspelled words, and some wrong English meanings.
 - Removed duplicates and alternate spellings of the same word.
 
