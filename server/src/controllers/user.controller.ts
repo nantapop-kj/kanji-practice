@@ -11,6 +11,7 @@ export const userController = {
     try {
       const query = parsePaginationQuery(req.query);
       const users = await userService.getAll(query);
+      
       req.log.info("Users listed", {
         event: LogEvent.UserList,
         userId: req.user?.id,

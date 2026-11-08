@@ -2,7 +2,7 @@ import type { Request, Response } from "express";
 import { ErrorCode, HttpStatus } from "../constants/http.js";
 import { LogEvent } from "../constants/log.js";
 import { wordService } from "../services/word.service.js";
-import type { WordInput, WordListResponse, WordRequest, WordResponse } from "../types/word.js";
+import type { LevelCounts, WordInput, WordListResponse, WordRequest, WordResponse } from "../types/word.js";
 import { HttpError } from "../utils/http-error.js";
 import { logFailure } from "../utils/log.js";
 import { parseWordId, parseWordInput, parseWordListQuery } from "../utils/word-validation.js";
@@ -14,6 +14,14 @@ const actorOf = (req: Request): string => {
 };
 
 export const wordController = {
+  async levels(req: Request, res: Response<{ levels: LevelCounts }>): Promise<void> {
+    try {
+      res.json({ levels: await wordService.levelCounts() });
+    } catch (err) {
+      throw logFailure(req, LogEvent.WordLevelsFailed, "Get word levels failed", err);
+    }
+  },
+
   async getAll(req: Request, res: Response<WordListResponse>): Promise<void> {
     try {
       res.json(await wordService.getAll(parseWordListQuery(req.query)));

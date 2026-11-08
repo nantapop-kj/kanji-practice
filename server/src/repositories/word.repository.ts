@@ -55,6 +55,8 @@ export const wordRepository = {
     return Object.fromEntries(LevelOrder.map((l) => [l, counts.get(l) ?? 0])) as LevelCounts;
   },
 
+  getById: (id: number): Promise<WordResponse | null> => prisma.word.findUnique({ where: { id }, select: wordSelect }),
+
   getByKanjiReading: (kanji: string, reading: string): Promise<WordResponse | null> =>
     prisma.word.findUnique({ where: { kanji_reading: { kanji, reading } }, select: wordSelect }),
 

@@ -4,7 +4,11 @@ import { requireAdmin, requireAuth } from "../middlewares/auth.middleware.js";
 
 export const wordRoutes = Router();
 
-wordRoutes.use(requireAuth, requireAdmin);
+wordRoutes.use(requireAuth);
+
+wordRoutes.get("/levels", wordController.levels);
+
+wordRoutes.use(requireAdmin);
 
 wordRoutes.get("/", wordController.getAll);
 wordRoutes.post("/", wordController.create);

@@ -22,6 +22,9 @@ const ErrorCodeKeys: Record<string, TKey> = {
     MEANING_TH_INVALID: 'errMeaningThInvalid',
     MEANING_EN_INVALID: 'errMeaningEnInvalid',
     LEVEL_INVALID: 'errLevelInvalid',
+    NOT_ENOUGH_WORDS: 'errNotEnoughWords',
+    NO_MEANING_IN_LANG: 'errNoMeaningInLang',
+    OVERRIDE_DENIED: 'errOverrideDenied',
 };
 
 const errorCodeMessage = (code: string | undefined, fallback: string, t: TFn): string => {

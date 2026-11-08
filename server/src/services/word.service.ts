@@ -1,6 +1,6 @@
 import { ErrorCode, HttpStatus } from "../constants/http.js";
 import { wordRepository } from "../repositories/word.repository.js";
-import type { WordInput, WordListQuery, WordListResponse, WordResponse } from "../types/word.js";
+import type { LevelCounts, WordInput, WordListQuery, WordListResponse, WordResponse } from "../types/word.js";
 import { HttpError } from "../utils/http-error.js";
 import { toPaginated } from "../utils/pagination.js";
 
@@ -13,6 +13,8 @@ const wordExists = (): HttpError =>
 const wordNotFound = (): HttpError => new HttpError(HttpStatus.NotFound, ErrorCode.WordNotFound, "Word not found");
 
 export const wordService = {
+  levelCounts: (): Promise<LevelCounts> => wordRepository.getLevelCounts(""),
+
   async getAll(query: WordListQuery): Promise<WordListResponse> {
     const [[items, total], levelCounts] = await Promise.all([
       wordRepository.getAll(query),

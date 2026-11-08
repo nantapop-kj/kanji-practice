@@ -39,4 +39,11 @@ export enum ErrorCode {
   MeaningThInvalid = "MEANING_TH_INVALID",
   MeaningEnInvalid = "MEANING_EN_INVALID",
   LevelInvalid = "LEVEL_INVALID",
+  QuizModeInvalid = "QUIZ_MODE_INVALID",
+  QuizTypeInvalid = "QUIZ_TYPE_INVALID",
+  QuizLangInvalid = "QUIZ_LANG_INVALID",
+  QuizAnswerInvalid = "QUIZ_ANSWER_INVALID",
+  NotEnoughWords = "NOT_ENOUGH_WORDS",
+  NoMeaningInLang = "NO_MEANING_IN_LANG",
+  OverrideDenied = "OVERRIDE_DENIED",
 }

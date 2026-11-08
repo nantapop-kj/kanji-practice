@@ -40,4 +40,10 @@ export enum LogEvent {
   WordDelete = "word.delete",
   WordDeleteFailed = "word.delete_failed",
   WordListFailed = "word.list_failed",
+  QuizNextFailed = "quiz.next_failed",
+  QuizAnswer = "quiz.answer",
+  QuizAnswerFailed = "quiz.answer_failed",
+  QuizOverride = "quiz.override",
+  QuizOverrideFailed = "quiz.override_failed",
+  WordLevelsFailed = "word.levels_failed",
 }
