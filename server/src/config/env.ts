@@ -11,7 +11,7 @@ const parseDummyHash = (value: string): string => {
   return value;
 };
 
-const isProd = process.env.APP_ENV === "prod" || process.env.NODE_ENV === "production";
+const isProd = process.env.APP_ENV === "prod";
 
 const parseSameSite = (value?: string): "lax" | "strict" | "none" =>
   value === "strict" || value === "none" ? value : "lax";

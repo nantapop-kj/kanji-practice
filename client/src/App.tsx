@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import { AppTabs } from '@/components/AppTabs';
 import { Header } from '@/components/Header';
 import { useI18n } from '@/i18n';
 import { AppRoutes } from '@/routes/AppRoutes';
@@ -14,6 +15,7 @@ export const App = () => {
     return (
         <div className="wrap">
             <Header />
+            <AppTabs />
             <AppRoutes />
         </div>
     );

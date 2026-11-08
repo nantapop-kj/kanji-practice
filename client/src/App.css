@@ -5,6 +5,7 @@ nav.tabs {
   border-bottom: 1px solid var(--border);
 }
 
+nav.tabs a,
 nav.tabs button {
   border: 0;
   background: none;
@@ -15,12 +16,15 @@ nav.tabs button {
   font-weight: 500;
   border-bottom: 2px solid transparent;
   margin-bottom: -1px;
+  text-decoration: none;
 }
 
+nav.tabs a:hover,
 nav.tabs button:hover {
   color: var(--text);
 }
 
+nav.tabs a[aria-current='page'],
 nav.tabs button[aria-selected='true'] {
   color: var(--text);
   border-bottom-color: var(--text);

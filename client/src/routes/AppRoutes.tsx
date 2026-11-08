@@ -1,9 +1,11 @@
 import { useEffect } from 'react';
 import { Route, Routes, useLocation, useNavigationType } from 'react-router-dom';
+import { AdminUsersPage } from '@/pages/AdminUsersPage';
 import { LandingPage } from '@/pages/LandingPage';
 import { LoginPage } from '@/pages/LoginPage';
 import { NotFoundPage } from '@/pages/NotFoundPage';
 import { QuizPage } from '@/pages/QuizPage';
+import { AdminRoute } from '@/routes/AdminRoute';
 import { GuestRoute } from '@/routes/GuestRoute';
 import { Paths } from '@/routes/paths';
 import { ProtectedRoute } from '@/routes/ProtectedRoute';
@@ -24,6 +26,9 @@ export const AppRoutes = () => {
             </Route>
             <Route element={<ProtectedRoute />}>
                 <Route path={Paths.quiz} element={<QuizPage />} />
+                <Route element={<AdminRoute />}>
+                    <Route path={Paths.adminUsers} element={<AdminUsersPage />} />
+                </Route>
             </Route>
             <Route path="*" element={<NotFoundPage />} />
         </Routes>
