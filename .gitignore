@@ -1,9 +1,7 @@
-# Env
 .env
 .env.*
 !.env.example
 
-# Logs
 logs
 *.log
 npm-debug.log*
@@ -18,7 +16,6 @@ dist-ssr
 server/src/generated
 *.local
 
-# Editor directories and files
 .vscode/*
 !.vscode/extensions.json
 .idea

@@ -11,10 +11,13 @@ const parseDummyHash = (value: string): string => {
   return value;
 };
 
+const isProd = process.env.APP_ENV === "prod" || process.env.NODE_ENV === "production";
+
 const parseSameSite = (value?: string): "lax" | "strict" | "none" =>
   value === "strict" || value === "none" ? value : "lax";
 
 export const env = {
+  isProd,
   port: Number(process.env.PORT ?? 3001),
   corsOrigins: (process.env.CORS_ORIGINS ?? "").split(",").filter(Boolean),
   databaseUrl: required("DATABASE_URL"),
