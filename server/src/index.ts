@@ -1,18 +1,20 @@
+import cookieParser from "cookie-parser";
 import cors from "cors";
 import express from "express";
-
-const port = Number(process.env.PORT ?? 3001);
-const corsOrigins = (process.env.CORS_ORIGINS ?? "").split(",").filter(Boolean);
+import { env } from "./config/env.js";
+import { errorHandler } from "./middlewares/error.middleware.js";
+import { routes } from "./routes/index.js";
 
 const app = express();
 
-app.use(cors({ origin: corsOrigins, credentials: true }));
+app.use(cors({ origin: env.corsOrigins, credentials: true }));
 app.use(express.json());
+app.use(cookieParser());
 
-app.get("/api/v1/health", (_req, res) => {
-  res.json({ status: "ok" });
-});
+app.use("/api/v1", routes);
 
-app.listen(port, () => {
-  console.log(`server listening on port ${port}`);
+app.use(errorHandler);
+
+app.listen(env.port, (): void => {
+  console.log(`server listening on port ${env.port}`);
 });
