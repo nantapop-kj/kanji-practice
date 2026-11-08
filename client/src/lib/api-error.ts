@@ -11,6 +11,7 @@ const ErrorCodeKeys: Record<string, TKey> = {
     NAME_REQUIRED: 'nameRequired',
     NAME_INVALID: 'nameInvalid',
     FORBIDDEN: 'errForbidden',
+    TOO_MANY_REQUESTS: 'errTooManyRequests',
     WORD_NOT_FOUND: 'errWordNotFound',
     WORD_EXISTS: 'errWordExists',
     KANJI_REQUIRED: 'errKanjiRequired',

@@ -75,11 +75,6 @@
     padding: 16px 0 8px;
 }
 
-.btn.ghost.danger-hover:hover:not(:disabled) {
-    color: var(--bad);
-    border-color: var(--bad);
-}
-
 .delete-preview {
     display: grid;
     gap: 2px;

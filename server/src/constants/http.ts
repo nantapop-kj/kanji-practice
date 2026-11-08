@@ -8,12 +8,14 @@ export enum HttpStatus {
   NotFound = 404,
   Conflict = 409,
   PayloadTooLarge = 413,
+  TooManyRequests = 429,
   InternalServerError = 500,
 }
 
 export enum ErrorCode {
   BadRequest = "BAD_REQUEST",
   PayloadTooLarge = "PAYLOAD_TOO_LARGE",
+  TooManyRequests = "TOO_MANY_REQUESTS",
   InternalError = "INTERNAL_ERROR",
   Unauthorized = "UNAUTHORIZED",
   Forbidden = "FORBIDDEN",

@@ -46,4 +46,10 @@ export enum LogEvent {
   QuizOverride = "quiz.override",
   QuizOverrideFailed = "quiz.override_failed",
   WordLevelsFailed = "word.levels_failed",
+  RateLimited = "rate_limit.exceeded",
+  StatsGetFailed = "stats.get_failed",
+  StatsReset = "stats.reset",
+  StatsResetFailed = "stats.reset_failed",
+  ClientError = "client.error",
+  ClientLogFailed = "client.log_failed",
 }

@@ -17,6 +17,7 @@ export default defineConfig(({ mode }) => {
         '/api': {
           target: env.VITE_API_URL || 'http://localhost:3001',
           changeOrigin: true,
+          xfwd: true,
         },
       },
     },

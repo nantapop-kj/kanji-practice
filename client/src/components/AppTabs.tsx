@@ -5,6 +5,7 @@ import { Paths } from '@/routes/paths';
 
 const Tabs: { to: string; label: TKey; adminOnly?: boolean }[] = [
     { to: Paths.quiz, label: 'tabQuiz' },
+    { to: Paths.stats, label: 'tabStats' },
     { to: Paths.adminWords, label: 'tabWords', adminOnly: true },
     { to: Paths.adminUsers, label: 'tabUsers', adminOnly: true },
 ];

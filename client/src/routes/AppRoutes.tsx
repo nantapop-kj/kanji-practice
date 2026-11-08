@@ -6,6 +6,7 @@ import { LandingPage } from '@/pages/LandingPage';
 import { LoginPage } from '@/pages/LoginPage';
 import { NotFoundPage } from '@/pages/NotFoundPage';
 import { QuizPage } from '@/pages/QuizPage';
+import { StatsPage } from '@/pages/StatsPage';
 import { AdminRoute } from '@/routes/AdminRoute';
 import { GuestRoute } from '@/routes/GuestRoute';
 import { Paths } from '@/routes/paths';
@@ -27,6 +28,7 @@ export const AppRoutes = () => {
             </Route>
             <Route element={<ProtectedRoute />}>
                 <Route path={Paths.quiz} element={<QuizPage />} />
+                <Route path={Paths.stats} element={<StatsPage />} />
                 <Route element={<AdminRoute />}>
                     <Route path={Paths.adminUsers} element={<AdminUsersPage />} />
                     <Route path={Paths.adminWords} element={<AdminWordsPage />} />

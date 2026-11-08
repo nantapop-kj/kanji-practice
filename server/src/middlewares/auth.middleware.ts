@@ -15,6 +15,15 @@ const unauthorized = (req: Request, message: string): HttpError =>
     new HttpError(HttpStatus.Unauthorized, ErrorCode.Unauthorized, message),
   );
 
+export const attachUser = async (req: Request, _res: Response, next: NextFunction): Promise<void> => {
+  const token: unknown = req.cookies?.[AuthCookie];
+  if (typeof token === "string") {
+    req.user = (await authService.getUserFromToken(token)) ?? undefined;
+  }
+
+  next();
+};
+
 export const requireAuth = async (req: Request, _res: Response, next: NextFunction): Promise<void> => {
   const token: unknown = req.cookies?.[AuthCookie];
   if (typeof token !== "string") {
