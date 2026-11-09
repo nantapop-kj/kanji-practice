@@ -1,0 +1,81 @@
+name: kanji-practice
+
+x-database-url: &database-url postgres://${PG_USER}:${PG_PASSWORD}@db:${PG_PORT}/${PG_DATABASE}
+
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: kanji-practice-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${PG_USER}
+      POSTGRES_PASSWORD: ${PG_PASSWORD}
+      POSTGRES_DB: ${PG_DATABASE}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    ports:
+      - "${PG_PORT}:5432"
+    networks:
+      - kanji-practice-network
+
+  server:
+    build:
+      context: .
+      dockerfile: server/Dockerfile
+    image: kanji-practice-server:${APP_ENV:-dev}
+    container_name: kanji-practice-server
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      APP_NAME: ${APP_NAME}
+      APP_ENV: ${APP_ENV}
+      PORT: ${SERVER_PORT}
+      DATABASE_URL: *database-url
+      JWT_SECRET: ${JWT_SECRET}
+      DUMMY_PASSWORD_HASH: ${DUMMY_PASSWORD_HASH}
+      CORS_ORIGINS: ${CORS_ORIGINS}
+      COOKIE_SAME_SITE: ${COOKIE_SAME_SITE}
+      COOKIE_SECURE: ${COOKIE_SECURE}
+    volumes:
+      - ./server:/app
+      - /app/node_modules
+      - server-logs:/app/logs
+    ports:
+      - "${SERVER_PORT}:3001"
+    networks:
+      - kanji-practice-network
+
+  client:
+    build:
+      context: .
+      dockerfile: client/Dockerfile
+    image: kanji-practice-client:${APP_ENV:-dev}
+    container_name: kanji-practice-client
+    restart: unless-stopped
+    depends_on:
+      server:
+        condition: service_started
+    environment:
+      VITE_API_URL: http://server:3001
+    volumes:
+      - ./client:/app
+      - /app/node_modules
+    ports:
+      - "${CLIENT_PORT}:3000"
+    networks:
+      - kanji-practice-network
+
+networks:
+  kanji-practice-network:
+    driver: bridge
+
+volumes:
+  pgdata:
+  server-logs:
