@@ -1,0 +1,28 @@
+export const ErrorCode = {
+    InvalidCredentials: 'INVALID_CREDENTIALS',
+    EmailTaken: 'EMAIL_TAKEN',
+    EmailRequired: 'EMAIL_REQUIRED',
+    EmailInvalid: 'EMAIL_INVALID',
+    PasswordRequired: 'PASSWORD_REQUIRED',
+    PasswordInvalid: 'PASSWORD_INVALID',
+    NameRequired: 'NAME_REQUIRED',
+    NameInvalid: 'NAME_INVALID',
+    Forbidden: 'FORBIDDEN',
+    TooManyRequests: 'TOO_MANY_REQUESTS',
+    WordNotFound: 'WORD_NOT_FOUND',
+    WordExists: 'WORD_EXISTS',
+    KanjiRequired: 'KANJI_REQUIRED',
+    KanjiInvalid: 'KANJI_INVALID',
+    ReadingRequired: 'READING_REQUIRED',
+    ReadingInvalid: 'READING_INVALID',
+    MeaningRequired: 'MEANING_REQUIRED',
+    MeaningInvalid: 'MEANING_INVALID',
+    MeaningThInvalid: 'MEANING_TH_INVALID',
+    MeaningEnInvalid: 'MEANING_EN_INVALID',
+    LevelInvalid: 'LEVEL_INVALID',
+    NotEnoughWords: 'NOT_ENOUGH_WORDS',
+    NoMeaningInLang: 'NO_MEANING_IN_LANG',
+    OverrideDenied: 'OVERRIDE_DENIED',
+} as const;
+
+export type ErrorCode = (typeof ErrorCode)[keyof typeof ErrorCode];

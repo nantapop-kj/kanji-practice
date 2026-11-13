@@ -1,23 +1,17 @@
-import { useEffect } from 'react';
-import { Route, Routes, useLocation, useNavigationType } from 'react-router-dom';
-import { AdminUsersPage } from '@/pages/AdminUsersPage';
-import { AdminWordsPage } from '@/pages/AdminWordsPage';
-import { LandingPage } from '@/pages/LandingPage';
-import { LoginPage } from '@/pages/LoginPage';
-import { NotFoundPage } from '@/pages/NotFoundPage';
-import { QuizPage } from '@/pages/QuizPage';
-import { StatsPage } from '@/pages/StatsPage';
-import { AdminRoute } from '@/routes/AdminRoute';
-import { GuestRoute } from '@/routes/GuestRoute';
-import { Paths } from '@/routes/paths';
-import { ProtectedRoute } from '@/routes/ProtectedRoute';
+import { useEffect, type JSX } from 'react';
+import { NavigationType, Route, Routes, useLocation, useNavigationType } from 'react-router-dom';
+import { AdminUsersPage, AdminWordsPage, LandingPage, LoginPage, NotFoundPage, QuizPage, StatsPage } from '@/pages';
+import { AdminRoute } from './AdminRoute';
+import { GuestRoute } from './GuestRoute';
+import { Paths } from './paths';
+import { ProtectedRoute } from './ProtectedRoute';
 
-export const AppRoutes = () => {
+export const AppRoutes = (): JSX.Element => {
     const { key } = useLocation();
-    const navigationType = useNavigationType();
+    const navigationType: NavigationType = useNavigationType();
 
-    useEffect(() => {
-        if (navigationType !== 'POP') window.scrollTo(0, 0);
+    useEffect((): void => {
+        if (navigationType !== NavigationType.Pop) window.scrollTo(0, 0);
     }, [key, navigationType]);
 
     return (

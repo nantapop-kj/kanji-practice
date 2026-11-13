@@ -1,19 +1,12 @@
 import { useEffect } from 'react';
-
-interface QuizHotkeys {
-    choiceCount: number;
-    answered: boolean;
-    disabled: boolean;
-    onChoose: (index: number) => void;
-    onNext: () => void;
-}
+import type { QuizHotkeysOptions } from '@/types';
 
 const isTypingTarget = (target: EventTarget | null): boolean =>
     target instanceof HTMLElement && (target.isContentEditable || ['INPUT', 'TEXTAREA', 'SELECT'].includes(target.tagName));
 
-export const useQuizHotkeys = ({ choiceCount, answered, disabled, onChoose, onNext }: QuizHotkeys) => {
-    useEffect(() => {
-        const handler = (e: KeyboardEvent) => {
+export const useQuizHotkeys = ({ choiceCount, answered, disabled, onChoose, onNext }: QuizHotkeysOptions): void => {
+    useEffect((): (() => void) => {
+        const handler = (e: KeyboardEvent): void => {
             if (disabled || e.altKey || e.ctrlKey || e.metaKey || e.isComposing) return;
 
             if (answered && e.key === 'Enter') {
@@ -24,7 +17,7 @@ export const useQuizHotkeys = ({ choiceCount, answered, disabled, onChoose, onNe
             }
 
             if (answered || isTypingTarget(e.target)) return;
-            const index = Number(e.key) - 1;
+            const index: number = Number(e.key) - 1;
             if (Number.isInteger(index) && index >= 0 && index < choiceCount) {
                 e.preventDefault();
                 onChoose(index);
@@ -32,6 +25,6 @@ export const useQuizHotkeys = ({ choiceCount, answered, disabled, onChoose, onNe
         };
 
         window.addEventListener('keydown', handler);
-        return () => window.removeEventListener('keydown', handler);
+        return (): void => window.removeEventListener('keydown', handler);
     }, [choiceCount, answered, disabled, onChoose, onNext]);
 };

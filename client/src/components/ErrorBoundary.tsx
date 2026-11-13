@@ -1,11 +1,9 @@
 import { Component, type ErrorInfo, type ReactNode } from 'react';
-import { reportClientError } from '@/services/error-reporter';
+import { ClientLogLevel } from '@/enums';
+import { reportClientError } from '@/services';
+import type { ErrorBoundaryProps, ErrorBoundaryState } from '@/types';
 
-interface ErrorBoundaryState {
-    failed: boolean;
-}
-
-export class ErrorBoundary extends Component<{ children: ReactNode }, ErrorBoundaryState> {
+export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
     state: ErrorBoundaryState = { failed: false };
 
     static getDerivedStateFromError(): ErrorBoundaryState {
@@ -14,7 +12,7 @@ export class ErrorBoundary extends Component<{ children: ReactNode }, ErrorBound
 
     componentDidCatch(error: Error, info: ErrorInfo): void {
         reportClientError({
-            level: 'error',
+            level: ClientLogLevel.Error,
             source: 'react',
             message: `${error.name}: ${error.message}`,
             stack: `${error.stack ?? ''}\n--- component stack ---${info.componentStack ?? ''}`,
@@ -29,7 +27,7 @@ export class ErrorBoundary extends Component<{ children: ReactNode }, ErrorBound
                 <div className="card empty" role="alert">
                     <h2>เกิดข้อผิดพลาด · Something went wrong</h2>
                     <p>ระบบบันทึกปัญหานี้ไว้แล้ว ลองโหลดหน้าใหม่อีกครั้ง · The problem has been logged. Please reload the page.</p>
-                    <button className="btn" onClick={() => location.reload()}>
+                    <button className="btn" onClick={(): void => location.reload()}>
                         โหลดใหม่ · Reload
                     </button>
                 </div>

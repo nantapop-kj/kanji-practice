@@ -1,30 +1,36 @@
 import { useCallback, useEffect, useState } from 'react';
-import { statsApi } from '@/services/stats.service';
-import type { StatsResponse } from '@/types/stats';
+import { statsApi } from '@/services';
+import type { AsyncResource, StatsResponse } from '@/types';
 
-export const useStats = () => {
+export const useStats = (): AsyncResource<StatsResponse> => {
     const [data, setData] = useState<StatsResponse | null>(null);
-    const [loading, setLoading] = useState(true);
+    const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<unknown>(null);
-    const [version, setVersion] = useState(0);
+    const [version, setVersion] = useState<number>(0);
 
-    useEffect(() => {
-        let active = true;
+    useEffect((): (() => void) => {
+        let active: boolean = true;
         setLoading(true);
         setError(null);
 
         statsApi
             .get()
-            .then((r) => active && setData(r))
-            .catch((err: unknown) => active && setError(err))
-            .finally(() => active && setLoading(false));
+            .then((r: StatsResponse): void => {
+                if (active) setData(r);
+            })
+            .catch((err: unknown): void => {
+                if (active) setError(err);
+            })
+            .finally((): void => {
+                if (active) setLoading(false);
+            });
 
-        return () => {
+        return (): void => {
             active = false;
         };
     }, [version]);
 
-    const reload = useCallback(() => setVersion((v) => v + 1), []);
+    const reload = useCallback((): void => setVersion((v: number): number => v + 1), []);
 
     return { data, loading, error, reload };
 };

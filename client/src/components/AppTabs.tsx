@@ -1,31 +1,34 @@
+import type { JSX } from 'react';
 import { NavLink } from 'react-router-dom';
-import { useAuth } from '@/contexts/AuthContext';
-import { useI18n, type TKey } from '@/i18n';
+import { useAuth, useI18n } from '@/contexts';
 import { Paths } from '@/routes/paths';
+import type { TabItem } from '@/types';
 
-const Tabs: { to: string; label: TKey; adminOnly?: boolean }[] = [
+const Tabs: TabItem[] = [
     { to: Paths.quiz, label: 'tabQuiz' },
     { to: Paths.stats, label: 'tabStats' },
     { to: Paths.adminWords, label: 'tabWords', adminOnly: true },
     { to: Paths.adminUsers, label: 'tabUsers', adminOnly: true },
 ];
 
-export const AppTabs = () => {
+export const AppTabs = (): JSX.Element | null => {
     const { t } = useI18n();
     const { user, isAdmin } = useAuth();
 
     if (!user) return null;
 
-    const visible = Tabs.filter((tab) => !tab.adminOnly || isAdmin);
+    const visible: TabItem[] = Tabs.filter((tab: TabItem): boolean => !tab.adminOnly || isAdmin);
     if (visible.length < 2) return null;
 
     return (
         <nav className="tabs">
-            {visible.map((tab) => (
-                <NavLink key={tab.to} to={tab.to}>
-                    {t(tab.label)}
-                </NavLink>
-            ))}
+            {visible.map(
+                (tab: TabItem): JSX.Element => (
+                    <NavLink key={tab.to} to={tab.to}>
+                        {t(tab.label)}
+                    </NavLink>
+                ),
+            )}
         </nav>
     );
 };

@@ -1,26 +1,21 @@
-import { useEffect, useRef, useState, type FormEvent } from 'react';
-import { useI18n } from '@/i18n';
+import { useEffect, useRef, useState, type ChangeEvent, type FormEvent, type JSX, type RefObject } from 'react';
+import { useI18n } from '@/contexts';
+import { Language } from '@/enums';
+import type { TypingFormProps } from '@/types';
 
-interface TypingFormProps {
-    lang: 'th' | 'en';
-    disabled: boolean;
-    answered: boolean;
-    onSubmit: (answer: string) => void;
-}
-
-export const TypingForm = ({ lang, disabled, answered, onSubmit }: TypingFormProps) => {
+export const TypingForm = ({ lang, disabled, answered, onSubmit }: TypingFormProps): JSX.Element => {
     const { t } = useI18n();
-    const [value, setValue] = useState('');
-    const input = useRef<HTMLInputElement>(null);
+    const [value, setValue] = useState<string>('');
+    const input: RefObject<HTMLInputElement | null> = useRef<HTMLInputElement>(null);
 
-    useEffect(() => {
+    useEffect((): void => {
         if (!answered) {
             setValue('');
             input.current?.focus();
         }
     }, [answered]);
 
-    const handleSubmit = (e: FormEvent) => {
+    const handleSubmit = (e: FormEvent<HTMLFormElement>): void => {
         e.preventDefault();
         if (value.trim()) onSubmit(value.trim());
     };
@@ -31,8 +26,8 @@ export const TypingForm = ({ lang, disabled, answered, onSubmit }: TypingFormPro
                 ref={input}
                 lang={lang}
                 value={value}
-                onChange={(e) => setValue(e.target.value)}
-                placeholder={lang === 'en' ? t('typePhEn') : t('typePhTh')}
+                onChange={(e: ChangeEvent<HTMLInputElement>): void => setValue(e.target.value)}
+                placeholder={lang === Language.En ? t('typePhEn') : t('typePhTh')}
                 aria-label={t('yourAnswer')}
                 disabled={disabled || answered}
                 maxLength={200}

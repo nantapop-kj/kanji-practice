@@ -1,14 +1,13 @@
-import { useEffect } from 'react';
-import { AppTabs } from '@/components/AppTabs';
-import { Header } from '@/components/Header';
-import { useI18n } from '@/i18n';
-import { AppRoutes } from '@/routes/AppRoutes';
+import { useEffect, type JSX } from 'react';
+import { AppTabs, Header } from '@/components';
+import { useI18n } from '@/contexts';
+import { AppRoutes } from '@/routes';
 import './App.css';
 
-export const App = () => {
+export const App = (): JSX.Element => {
     const { t } = useI18n();
 
-    useEffect(() => {
+    useEffect((): void => {
         document.title = `${t('appName')} — ${t('tagline')}`;
     }, [t]);
 

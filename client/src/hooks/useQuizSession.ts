@@ -1,25 +1,25 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
-import type { Language } from '@/i18n';
-import { quizApi } from '@/services/quiz.service';
-import type { AnswerResult, Question, QuizPrefs, SessionScore } from '@/types/quiz';
+import { useCallback, useEffect, useRef, useState, type RefObject } from 'react';
+import type { Language } from '@/enums';
+import { quizApi } from '@/services';
+import type { AnswerResult, Question, QuizPrefs, SessionScore, UseQuizSessionResult } from '@/types';
 
 const RecentLimit = 5;
 const EmptyScore: SessionScore = { answered: 0, correct: 0, streak: 0, bestStreak: 0 };
 
-export const useQuizSession = (prefs: QuizPrefs, lang: Language) => {
+export const useQuizSession = (prefs: QuizPrefs, lang: Language): UseQuizSessionResult => {
     const [question, setQuestion] = useState<Question | null>(null);
     const [result, setResult] = useState<AnswerResult | null>(null);
-    const [given, setGiven] = useState('');
-    const [loading, setLoading] = useState(true);
-    const [submitting, setSubmitting] = useState(false);
-    const [overridden, setOverridden] = useState(false);
+    const [given, setGiven] = useState<string>('');
+    const [loading, setLoading] = useState<boolean>(true);
+    const [submitting, setSubmitting] = useState<boolean>(false);
+    const [overridden, setOverridden] = useState<boolean>(false);
     const [error, setError] = useState<unknown>(null);
     const [score, setScore] = useState<SessionScore>(EmptyScore);
-    const recent = useRef<number[]>([]);
-    const requestId = useRef(0);
+    const recent: RefObject<number[]> = useRef<number[]>([]);
+    const requestId: RefObject<number> = useRef<number>(0);
 
-    const loadNext = useCallback(async () => {
-        const id = ++requestId.current;
+    const loadNext = useCallback(async (): Promise<void> => {
+        const id: number = ++requestId.current;
         setLoading(true);
         setError(null);
         setResult(null);
@@ -27,7 +27,7 @@ export const useQuizSession = (prefs: QuizPrefs, lang: Language) => {
         setOverridden(false);
 
         try {
-            const next = await quizApi.next({ ...prefs, lang, exclude: recent.current });
+            const next: Question = await quizApi.next({ ...prefs, lang, exclude: recent.current });
             if (id !== requestId.current) return;
             recent.current = [...recent.current, next.wordId].slice(-RecentLimit);
             setQuestion(next);
@@ -40,19 +40,19 @@ export const useQuizSession = (prefs: QuizPrefs, lang: Language) => {
         }
     }, [prefs, lang]);
 
-    useEffect(() => {
+    useEffect((): void => {
         void loadNext();
     }, [loadNext]);
 
     const submit = useCallback(
-        async (answer: string) => {
+        async (answer: string): Promise<void> => {
             if (!question || result || submitting) return;
 
             setSubmitting(true);
             setGiven(answer);
             setError(null);
             try {
-                const res = await quizApi.answer({
+                const res: AnswerResult = await quizApi.answer({
                     wordId: question.wordId,
                     qtype: question.qtype,
                     mode: question.mode,
@@ -60,8 +60,8 @@ export const useQuizSession = (prefs: QuizPrefs, lang: Language) => {
                     answer,
                 });
                 setResult(res);
-                setScore((s) => {
-                    const streak = res.correct ? s.streak + 1 : 0;
+                setScore((s: SessionScore): SessionScore => {
+                    const streak: number = res.correct ? s.streak + 1 : 0;
                     return {
                         answered: s.answered + 1,
                         correct: s.correct + (res.correct ? 1 : 0),
@@ -79,7 +79,7 @@ export const useQuizSession = (prefs: QuizPrefs, lang: Language) => {
         [question, result, submitting],
     );
 
-    const override = useCallback(async () => {
+    const override = useCallback(async (): Promise<void> => {
         if (!question || !result?.canOverride || overridden) return;
 
         setSubmitting(true);
@@ -87,8 +87,8 @@ export const useQuizSession = (prefs: QuizPrefs, lang: Language) => {
             const { stat } = await quizApi.override({ wordId: question.wordId, qtype: question.qtype });
             setOverridden(true);
             setResult({ ...result, correct: true, canOverride: false, stat });
-            setScore((s) => {
-                const streak = s.streak + 1;
+            setScore((s: SessionScore): SessionScore => {
+                const streak: number = s.streak + 1;
                 return { ...s, correct: s.correct + 1, streak, bestStreak: Math.max(s.bestStreak, streak) };
             });
         } catch (err) {
@@ -98,7 +98,7 @@ export const useQuizSession = (prefs: QuizPrefs, lang: Language) => {
         }
     }, [question, result, overridden]);
 
-    const resetScore = useCallback(() => setScore(EmptyScore), []);
+    const resetScore = useCallback((): void => setScore(EmptyScore), []);
 
     return { question, result, given, loading, submitting, overridden, error, score, loadNext, submit, override, resetScore };
 };

@@ -1,22 +1,13 @@
-import { useEffect, useRef } from 'react';
-import { useI18n } from '@/i18n';
-import type { AnswerResult } from '@/types/quiz';
+import { useEffect, useRef, type JSX, type RefObject } from 'react';
+import { useI18n } from '@/contexts';
+import type { AnswerFeedbackProps, Word } from '@/types';
 
-interface AnswerFeedbackProps {
-    result: AnswerResult;
-    given: string;
-    overridden: boolean;
-    busy: boolean;
-    onOverride: () => void;
-    onNext: () => void;
-}
-
-export const AnswerFeedback = ({ result, given, overridden, busy, onOverride, onNext }: AnswerFeedbackProps) => {
+export const AnswerFeedback = ({ result, given, overridden, busy, onOverride, onNext }: AnswerFeedbackProps): JSX.Element => {
     const { t } = useI18n();
-    const nextButton = useRef<HTMLButtonElement>(null);
-    const { word } = result;
+    const nextButton: RefObject<HTMLButtonElement | null> = useRef<HTMLButtonElement>(null);
+    const word: Word = result.word;
 
-    useEffect(() => {
+    useEffect((): void => {
         nextButton.current?.focus();
     }, []);
 

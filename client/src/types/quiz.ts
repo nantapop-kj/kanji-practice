@@ -1,10 +1,5 @@
-import type { Language } from '@/i18n';
-import type { JlptLevel } from '@/lib/levels';
-import type { LevelCounts, Word } from '@/types/word';
-
-export type QuestionType = 'read' | 'mean';
-export type QuestionTypeFilter = 'mix' | QuestionType;
-export type AnswerMode = 'choice' | 'typing';
+import type { AnswerMode, JlptLevel, Language, QuestionType, QuestionTypeFilter } from '@/enums';
+import type { LevelCountsResponse, Word } from './word';
 
 export interface QuizPrefs {
     levels: JlptLevel[];
@@ -50,4 +45,26 @@ export interface SessionScore {
     bestStreak: number;
 }
 
-export type { LevelCounts };
+export interface AnswerInput {
+    wordId: number;
+    qtype: QuestionType;
+    mode: AnswerMode;
+    lang: Language;
+    answer: string;
+}
+
+export interface OverrideInput {
+    wordId: number;
+    qtype: QuestionType;
+}
+
+export interface OverrideResponse {
+    stat: Stat;
+}
+
+export interface QuizApi {
+    next: (params: NextQuestionParams) => Promise<Question>;
+    answer: (input: AnswerInput) => Promise<AnswerResult>;
+    override: (input: OverrideInput) => Promise<OverrideResponse>;
+    levels: () => Promise<LevelCountsResponse>;
+}

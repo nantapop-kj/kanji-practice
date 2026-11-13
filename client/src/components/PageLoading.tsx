@@ -1,7 +1,8 @@
-import { Spinner } from '@/components/Spinner';
-import { useI18n } from '@/i18n';
+import type { JSX } from 'react';
+import { useI18n } from '@/contexts';
+import { Spinner } from './Spinner';
 
-export const PageLoading = () => {
+export const PageLoading = (): JSX.Element => {
     const { t } = useI18n();
 
     return (

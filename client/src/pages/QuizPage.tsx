@@ -1,44 +1,36 @@
-import { useCallback } from 'react';
+import { useCallback, type JSX } from 'react';
 import { Link } from 'react-router-dom';
-import { AnswerFeedback } from '@/components/AnswerFeedback';
-import { ChoiceList } from '@/components/ChoiceList';
-import { QuestionCard } from '@/components/QuestionCard';
-import { QuizSettings } from '@/components/QuizSettings';
-import { SessionScoreCard } from '@/components/SessionScoreCard';
-import { Spinner } from '@/components/Spinner';
-import { TypingForm } from '@/components/TypingForm';
-import { useAuth } from '@/contexts/AuthContext';
-import { useLevelCounts } from '@/hooks/useLevelCounts';
-import { useQuizHotkeys } from '@/hooks/useQuizHotkeys';
-import { useQuizPrefs } from '@/hooks/useQuizPrefs';
-import { useQuizSession } from '@/hooks/useQuizSession';
-import { useI18n } from '@/i18n';
-import { apiErrorMessage } from '@/lib/api-error';
+import { AnswerFeedback, ChoiceList, QuestionCard, QuizSettings, SessionScoreCard, Spinner, TypingForm } from '@/components';
+import { useAuth, useI18n } from '@/contexts';
+import { AnswerMode, ErrorCode, QuestionType } from '@/enums';
+import { useLevelCounts, useQuizHotkeys, useQuizPrefs, useQuizSession } from '@/hooks';
+import { apiErrorMessage } from '@/lib';
 import { Paths } from '@/routes/paths';
-import { ApiError } from '@/services/http';
+import { ApiError } from '@/services';
+import type { LevelCounts, UseQuizSessionResult } from '@/types';
 import './QuizPage.css';
 
-export const QuizPage = () => {
+export const QuizPage = (): JSX.Element => {
     const { t, language } = useI18n();
     const { isAdmin } = useAuth();
     const { prefs, updatePrefs } = useQuizPrefs();
-    const counts = useLevelCounts();
-    const session = useQuizSession(prefs, language);
+    const counts: LevelCounts | null = useLevelCounts();
+    const session: UseQuizSessionResult = useQuizSession(prefs, language);
     const { question, result, given, loading, submitting, overridden, error, score } = session;
 
-    const choices = question?.choices ?? [];
-    const choose = useCallback((index: number) => void session.submit(choices[index]), [session.submit, choices]);
-    const next = useCallback(() => void session.loadNext(), [session.loadNext]);
+    const choices: string[] = question?.choices ?? [];
+    const choose = useCallback((index: number): void => void session.submit(choices[index]), [session.submit, choices]);
+    const next = useCallback((): void => void session.loadNext(), [session.loadNext]);
 
     useQuizHotkeys({
-        choiceCount: question?.mode === 'choice' ? choices.length : 0,
+        choiceCount: question?.mode === AnswerMode.Choice ? choices.length : 0,
         answered: result !== null,
         disabled: loading || submitting,
         onChoose: choose,
         onNext: next,
     });
 
-    const notEnoughWords = error instanceof ApiError && error.code === 'NOT_ENOUGH_WORDS';
+    const notEnoughWords: boolean = error instanceof ApiError && error.code === ErrorCode.NotEnoughWords;
 
     return (
         <main className="quiz-layout">
@@ -67,21 +59,21 @@ export const QuizPage = () => {
                 ) : (
                     <div className={loading ? 'quiz-loading' : undefined} aria-busy={loading}>
                         <QuestionCard question={question} />
-                        {question.mode === 'choice' ? (
+                        {question.mode === AnswerMode.Choice ? (
                             <ChoiceList
                                 choices={choices}
-                                japanese={question.qtype === 'read'}
+                                japanese={question.qtype === QuestionType.Read}
                                 selected={given}
                                 correctAnswer={result?.correctAnswer}
                                 disabled={loading || submitting}
-                                onChoose={(choice) => void session.submit(choice)}
+                                onChoose={(choice: string): void => void session.submit(choice)}
                             />
                         ) : (
                             <TypingForm
                                 lang={question.lang}
                                 disabled={loading || submitting}
                                 answered={result !== null}
-                                onSubmit={(answer) => void session.submit(answer)}
+                                onSubmit={(answer: string): void => void session.submit(answer)}
                             />
                         )}
                         {error !== null && <div className="msg ng quiz-error">{apiErrorMessage(error, t)}</div>}
@@ -91,11 +83,13 @@ export const QuizPage = () => {
                                 given={given}
                                 overridden={overridden}
                                 busy={submitting}
-                                onOverride={() => void session.override()}
+                                onOverride={(): void => void session.override()}
                                 onNext={next}
                             />
                         )}
-                        {!result && question.mode === 'choice' && <div className="hint quiz-hint">{t('choiceHotkeys')}</div>}
+                        {!result && question.mode === AnswerMode.Choice && (
+                            <div className="hint quiz-hint">{t('choiceHotkeys')}</div>
+                        )}
                     </div>
                 )}
             </section>

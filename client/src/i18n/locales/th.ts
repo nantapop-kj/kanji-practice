@@ -179,5 +179,3 @@ export const th = {
     notFoundBody: 'หน้าที่คุณกำลังหาอาจถูกย้ายหรือไม่มีอยู่',
     notFoundCta: 'กลับหน้าแรก',
 };
-
-export type Dict = Record<keyof typeof th, string>;

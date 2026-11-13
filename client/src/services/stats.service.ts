@@ -1,7 +1,7 @@
-import { http } from '@/services/http';
-import type { StatsResponse } from '@/types/stats';
+import type { StatsApi, StatsResponse } from '@/types';
+import { http } from './http';
 
-export const statsApi = {
-    get: () => http.get<StatsResponse>('/stats'),
-    reset: () => http.delete<void>('/stats'),
+export const statsApi: StatsApi = {
+    get: (): Promise<StatsResponse> => http.get<StatsResponse>('/stats'),
+    reset: (): Promise<void> => http.delete<void>('/stats'),
 };

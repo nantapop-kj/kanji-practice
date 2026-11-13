@@ -1,14 +1,10 @@
-import { useI18n } from '@/i18n';
-import type { SessionScore } from '@/types/quiz';
+import type { JSX } from 'react';
+import { useI18n } from '@/contexts';
+import type { SessionScoreCardProps } from '@/types';
 
-interface SessionScoreCardProps {
-    score: SessionScore;
-    onReset: () => void;
-}
-
-export const SessionScoreCard = ({ score, onReset }: SessionScoreCardProps) => {
+export const SessionScoreCard = ({ score, onReset }: SessionScoreCardProps): JSX.Element => {
     const { t } = useI18n();
-    const accuracy = score.answered ? Math.round((score.correct / score.answered) * 100) : 0;
+    const accuracy: number = score.answered ? Math.round((score.correct / score.answered) * 100) : 0;
 
     return (
         <div className="session-card">

@@ -1,17 +1,23 @@
 import { useEffect, useState } from 'react';
-import { quizApi } from '@/services/quiz.service';
-import type { LevelCounts } from '@/types/word';
+import { quizApi } from '@/services';
+import type { LevelCounts } from '@/types';
 
-export const useLevelCounts = () => {
+export const useLevelCounts = (): LevelCounts | null => {
     const [counts, setCounts] = useState<LevelCounts | null>(null);
 
-    useEffect(() => {
-        let active = true;
+    useEffect((): (() => void) => {
+        let active: boolean = true;
+
         quizApi
             .levels()
-            .then((r) => active && setCounts(r.levels))
-            .catch(() => active && setCounts(null));
-        return () => {
+            .then((r): void => {
+                if (active) setCounts(r.levels);
+            })
+            .catch((): void => {
+                if (active) setCounts(null);
+            });
+
+        return (): void => {
             active = false;
         };
     }, []);

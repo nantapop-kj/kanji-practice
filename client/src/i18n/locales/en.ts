@@ -1,4 +1,4 @@
-import type { Dict } from './th';
+import type { Dict } from '@/types';
 
 export const en: Dict = {
     appName: 'Kanji Practice',

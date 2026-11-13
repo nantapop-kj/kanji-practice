@@ -1,7 +1,2 @@
-export {
-    I18nProvider,
-    useI18n,
-    type Language,
-    type TKey,
-    type TFn
-} from '@/contexts/I18nContext';
+export { en } from './locales/en';
+export { th } from './locales/th';

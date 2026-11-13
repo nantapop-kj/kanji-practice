@@ -1,14 +1,11 @@
-import { useMemo } from 'react';
-import { useI18n } from '@/i18n';
-import type { StatsWord } from '@/types/stats';
-
-interface WeakWordsTableProps {
-    words: StatsWord[];
-}
+import { useMemo, type JSX } from 'react';
+import { useI18n } from '@/contexts';
+import { Language } from '@/enums';
+import type { ScoreProps, StatsWord, WeakWordsTableProps } from '@/types';
 
 const percent = (correct: number, total: number): number => (total ? Math.round((correct / total) * 100) : 0);
 
-const Score = ({ correct, wrong }: { correct: number; wrong: number }) =>
+const Score = ({ correct, wrong }: ScoreProps): JSX.Element =>
     correct + wrong === 0 ? (
         <span className="stats-none">–</span>
     ) : (
@@ -19,11 +16,12 @@ const Score = ({ correct, wrong }: { correct: number; wrong: number }) =>
         </span>
     );
 
-export const WeakWordsTable = ({ words }: WeakWordsTableProps) => {
+export const WeakWordsTable = ({ words }: WeakWordsTableProps): JSX.Element => {
     const { t, language } = useI18n();
 
     const dateFormat = useMemo(
-        () => new Intl.DateTimeFormat(language === 'th' ? 'th-TH' : 'en-US', { dateStyle: 'medium' }),
+        (): Intl.DateTimeFormat =>
+            new Intl.DateTimeFormat(language === Language.Th ? 'th-TH' : 'en-US', { dateStyle: 'medium' }),
         [language],
     );
 
@@ -41,11 +39,11 @@ export const WeakWordsTable = ({ words }: WeakWordsTableProps) => {
                     </tr>
                 </thead>
                 <tbody>
-                    {words.map((w) => {
-                        const correct = w.readCorrect + w.meanCorrect;
-                        const total = correct + w.readWrong + w.meanWrong;
-                        const accuracy = percent(correct, total);
-                        const meanings = language === 'en' && w.meaningsEn.length ? w.meaningsEn : w.meaningsTh;
+                    {words.map((w: StatsWord): JSX.Element => {
+                        const correct: number = w.readCorrect + w.meanCorrect;
+                        const total: number = correct + w.readWrong + w.meanWrong;
+                        const accuracy: number = percent(correct, total);
+                        const meanings: string[] = language === Language.En && w.meaningsEn.length ? w.meaningsEn : w.meaningsTh;
 
                         return (
                             <tr key={w.wordId}>

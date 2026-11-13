@@ -1,9 +1,11 @@
-import { useI18n } from '@/i18n';
-import type { Question } from '@/types/quiz';
+import type { JSX } from 'react';
+import { useI18n } from '@/contexts';
+import { Language, QuestionType } from '@/enums';
+import type { QuestionCardProps } from '@/types';
 
-export const QuestionCard = ({ question }: { question: Question }) => {
+export const QuestionCard = ({ question }: QuestionCardProps): JSX.Element => {
     const { t } = useI18n();
-    const isRead = question.qtype === 'read';
+    const isRead: boolean = question.qtype === QuestionType.Read;
 
     return (
         <>
@@ -20,7 +22,7 @@ export const QuestionCard = ({ question }: { question: Question }) => {
                 {question.kanji}
             </div>
             <div className="ask">
-                {isRead ? t('askRead') : question.lang === 'en' ? t('askMeanEn') : t('askMeanTh')}
+                {isRead ? t('askRead') : question.lang === Language.En ? t('askMeanEn') : t('askMeanTh')}
             </div>
         </>
     );

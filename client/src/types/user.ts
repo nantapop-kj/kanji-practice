@@ -1,4 +1,5 @@
-import type { Role } from '@/types/auth';
+import type { Role } from '@/enums';
+import type { Paginated, PaginationQuery } from './pagination';
 
 export interface PublicUser {
     id: string;
@@ -11,15 +12,6 @@ export interface PublicUser {
     updatedBy: string | null;
 }
 
-export interface PaginationQuery {
-    page: number;
-    pageSize: number;
-}
-
-export interface Paginated<T> {
-    items: T[];
-    page: number;
-    pageSize: number;
-    total: number;
-    totalPages: number;
+export interface UsersApi {
+    list: (query: PaginationQuery) => Promise<Paginated<PublicUser>>;
 }

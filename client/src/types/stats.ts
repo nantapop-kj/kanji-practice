@@ -1,4 +1,4 @@
-import type { JlptLevel } from '@/lib/levels';
+import type { JlptLevel } from '@/enums';
 
 export interface StatsWord {
     wordId: number;
@@ -38,4 +38,9 @@ export interface StatsResponse {
     summary: StatsSummary;
     levels: LevelStat[];
     words: StatsWord[];
+}
+
+export interface StatsApi {
+    get: () => Promise<StatsResponse>;
+    reset: () => Promise<void>;
 }
