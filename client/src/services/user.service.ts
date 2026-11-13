@@ -1,7 +1,7 @@
-import { http } from '@/services/http';
-import type { Paginated, PaginationQuery, PublicUser } from '@/types/user';
+import type { Paginated, PaginationQuery, PublicUser, UsersApi } from '@/types';
+import { http } from './http';
 
-export const usersApi = {
-    list: ({ page, pageSize }: PaginationQuery) =>
+export const usersApi: UsersApi = {
+    list: ({ page, pageSize }: PaginationQuery): Promise<Paginated<PublicUser>> =>
         http.get<Paginated<PublicUser>>(`/users?${new URLSearchParams({ page: String(page), pageSize: String(pageSize) })}`),
 };

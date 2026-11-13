@@ -1,59 +1,49 @@
-import {
-    createContext,
-    useCallback,
-    useContext,
-    useEffect,
-    useMemo,
-    useState,
-    type ReactNode,
-} from 'react';
-import { authApi } from '@/services/auth.service';
-import type { LoginInput, RegisterInput, User } from '@/types/auth';
+import { createContext, useCallback, useContext, useEffect, useMemo, useState, type Context, type JSX } from 'react';
+import { Role } from '@/enums';
+import { authApi } from '@/services';
+import type { AuthContextValue, AuthProviderProps, LoginInput, RegisterInput, User } from '@/types';
 
-interface AuthContextValue {
-    user: User | null;
-    loading: boolean;
-    isAdmin: boolean;
-    login: (input: LoginInput) => Promise<void>;
-    register: (input: RegisterInput) => Promise<void>;
-    logout: () => Promise<void>;
-}
+const AuthContext: Context<AuthContextValue | null> = createContext<AuthContextValue | null>(null);
 
-const AuthContext = createContext<AuthContextValue | null>(null);
-
-export const AuthProvider = ({ children }: { children: ReactNode }) => {
+export const AuthProvider = ({ children }: AuthProviderProps): JSX.Element => {
     const [user, setUser] = useState<User | null>(null);
-    const [loading, setLoading] = useState(true);
+    const [loading, setLoading] = useState<boolean>(true);
 
-    useEffect(() => {
-        let active = true;
+    useEffect((): (() => void) => {
+        let active: boolean = true;
 
         authApi
             .profile()
-            .then((r) => active && setUser(r.user))
-            .catch(() => active && setUser(null))
-            .finally(() => active && setLoading(false));
+            .then((r): void => {
+                if (active) setUser(r.user);
+            })
+            .catch((): void => {
+                if (active) setUser(null);
+            })
+            .finally((): void => {
+                if (active) setLoading(false);
+            });
 
-        return () => {
+        return (): void => {
             active = false;
         };
     }, []);
 
-    const login = useCallback(async (input: LoginInput) => {
+    const login = useCallback(async (input: LoginInput): Promise<void> => {
         setUser((await authApi.login(input)).user);
     }, []);
 
-    const register = useCallback(async (input: RegisterInput) => {
+    const register = useCallback(async (input: RegisterInput): Promise<void> => {
         setUser((await authApi.register(input)).user);
     }, []);
 
-    const logout = useCallback(async () => {
-        await authApi.logout().catch(() => undefined);
+    const logout = useCallback(async (): Promise<void> => {
+        await authApi.logout().catch((): undefined => undefined);
         setUser(null);
     }, []);
 
     const value = useMemo(
-        () => ({ user, loading, isAdmin: user?.role === 'admin', login, register, logout }),
+        (): AuthContextValue => ({ user, loading, isAdmin: user?.role === Role.Admin, login, register, logout }),
         [user, loading, login, register, logout],
     );
 
@@ -61,7 +51,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 };
 
 export const useAuth = (): AuthContextValue => {
-    const ctx = useContext(AuthContext);
+    const ctx: AuthContextValue | null = useContext(AuthContext);
 
     if (!ctx) throw new Error('useAuth must be used inside <AuthProvider>');
 

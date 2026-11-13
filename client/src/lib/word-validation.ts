@@ -1,4 +1,4 @@
-import type { TKey } from '@/i18n';
+import type { WordDraft, WordFieldErrors } from '@/types';
 
 const KanjiMaxLength = 50;
 const ReadingMaxLength = 100;
@@ -12,27 +12,23 @@ const HasThai = /\p{Script=Thai}/u;
 const EnglishRegex = /^[A-Za-z0-9\s().,'"!?~;:&\-]+$/;
 const HasEnglish = /[A-Za-z]/;
 
-export type WordField = 'kanji' | 'reading' | 'meaningsTh' | 'meaningsEn';
-export type WordFieldErrors = Partial<Record<WordField, TKey>>;
-
-export interface WordDraft {
-    kanji: string;
-    reading: string;
-    meaningsTh: string[];
-    meaningsEn: string[];
-}
-
 const meaningsValid = (meanings: string[], pattern: RegExp, required: RegExp): boolean =>
-    meanings.every((m) => m.length <= MeaningMaxLength && pattern.test(m) && required.test(m));
+    meanings.every((m: string): boolean => m.length <= MeaningMaxLength && pattern.test(m) && required.test(m));
 
 export const validateWord = ({ kanji, reading, meaningsTh, meaningsEn }: WordDraft): WordFieldErrors => {
     const errors: WordFieldErrors = {};
 
-    if (!kanji) errors.kanji = 'errKanjiRequired';
-    else if (kanji.length > KanjiMaxLength || !JapaneseRegex.test(kanji)) errors.kanji = 'errKanjiInvalid';
+    if (!kanji) {
+        errors.kanji = 'errKanjiRequired';
+    } else if (kanji.length > KanjiMaxLength || !JapaneseRegex.test(kanji)) {
+        errors.kanji = 'errKanjiInvalid';
+    }
 
-    if (!reading) errors.reading = 'errReadingRequired';
-    else if (reading.length > ReadingMaxLength || !KanaRegex.test(reading)) errors.reading = 'errReadingInvalid';
+    if (!reading) {
+        errors.reading = 'errReadingRequired';
+    } else if (reading.length > ReadingMaxLength || !KanaRegex.test(reading)) {
+        errors.reading = 'errReadingInvalid';
+    }
 
     if (meaningsTh.length > MeaningMaxItems || meaningsEn.length > MeaningMaxItems) {
         errors.meaningsTh = 'errMeaningInvalid';
@@ -40,9 +36,13 @@ export const validateWord = ({ kanji, reading, meaningsTh, meaningsEn }: WordDra
         errors.meaningsTh = 'errMeaningThInvalid';
     }
 
-    if (!meaningsValid(meaningsEn, EnglishRegex, HasEnglish)) errors.meaningsEn = 'errMeaningEnInvalid';
+    if (!meaningsValid(meaningsEn, EnglishRegex, HasEnglish)) {
+        errors.meaningsEn = 'errMeaningEnInvalid';
+    }
 
-    if (meaningsTh.length === 0 && meaningsEn.length === 0) errors.meaningsTh = 'errMeaningRequired';
+    if (meaningsTh.length === 0 && meaningsEn.length === 0) {
+        errors.meaningsTh = 'errMeaningRequired';
+    }
 
     return errors;
 };

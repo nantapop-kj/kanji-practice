@@ -1,11 +1,9 @@
-import { http } from '@/services/http';
-import type { LoginInput, RegisterInput, User } from '@/types/auth';
+import type { AuthApi, LoginInput, RegisterInput, UserResponse } from '@/types';
+import { http } from './http';
 
-type UserResponse = { user: User };
-
-export const authApi = {
-    profile: () => http.get<UserResponse>('/auth/profile'),
-    login: (input: LoginInput) => http.post<UserResponse>('/auth/login', input),
-    register: (input: RegisterInput) => http.post<UserResponse>('/auth/register', input),
-    logout: () => http.post<void>('/auth/logout'),
+export const authApi: AuthApi = {
+    profile: (): Promise<UserResponse> => http.get<UserResponse>('/auth/profile'),
+    login: (input: LoginInput): Promise<UserResponse> => http.post<UserResponse>('/auth/login', input),
+    register: (input: RegisterInput): Promise<UserResponse> => http.post<UserResponse>('/auth/register', input),
+    logout: (): Promise<void> => http.post<void>('/auth/logout'),
 };

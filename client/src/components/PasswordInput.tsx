@@ -1,13 +1,12 @@
-import { useState, type InputHTMLAttributes } from 'react';
-import { useI18n } from '@/i18n';
+import { useState, type JSX } from 'react';
+import { useI18n } from '@/contexts';
+import type { PasswordInputProps } from '@/types';
 import './PasswordInput.css';
 
-type PasswordInputProps = Omit<InputHTMLAttributes<HTMLInputElement>, 'type'>;
-
-export const PasswordInput = (props: PasswordInputProps) => {
+export const PasswordInput = (props: PasswordInputProps): JSX.Element => {
     const { t } = useI18n();
-    const [visible, setVisible] = useState(false);
-    const label = visible ? t('hidePassword') : t('showPassword');
+    const [visible, setVisible] = useState<boolean>(false);
+    const label: string = visible ? t('hidePassword') : t('showPassword');
 
     return (
         <div className="password-field">
@@ -15,7 +14,7 @@ export const PasswordInput = (props: PasswordInputProps) => {
             <button
                 type="button"
                 className="password-toggle"
-                onClick={() => setVisible((v) => !v)}
+                onClick={(): void => setVisible((v: boolean): boolean => !v)}
                 aria-label={label}
                 aria-pressed={visible}
                 title={label}

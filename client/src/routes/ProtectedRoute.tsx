@@ -1,11 +1,12 @@
-import { Navigate, Outlet, useLocation } from 'react-router-dom';
-import { PageLoading } from '@/components/PageLoading';
-import { useAuth } from '@/contexts/AuthContext';
-import { Paths } from '@/routes/paths';
+import type { JSX } from 'react';
+import { Navigate, Outlet, useLocation, type Location } from 'react-router-dom';
+import { PageLoading } from '@/components';
+import { useAuth } from '@/contexts';
+import { Paths } from './paths';
 
-export const ProtectedRoute = () => {
+export const ProtectedRoute = (): JSX.Element => {
     const { user, loading } = useAuth();
-    const location = useLocation();
+    const location: Location = useLocation();
 
     if (loading) return <PageLoading />;
     if (!user) return <Navigate to={Paths.login} replace state={{ from: location }} />;

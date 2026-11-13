@@ -1,35 +1,33 @@
-export const storage = {
-  get(key: string): string | null {
-    try {
-      return localStorage.getItem(key);
-    } catch {
-      return null;
-    }
-  },
+import type { StorageKey } from '@/enums';
+import type { StorageApi } from '@/types';
 
-  set(key: string, value: string): void {
-    try {
-      localStorage.setItem(key, value);
-    } catch {
-    }
-  },
+export const storage: StorageApi = {
+    get(key: StorageKey): string | null {
+        try {
+            return localStorage.getItem(key);
+        } catch {
+            return null;
+        }
+    },
 
-  getJSON<T>(key: string, fallback: T): T {
-    try {
-      const v = this.get(key);
-      return v ? { ...fallback, ...JSON.parse(v) } : fallback;
-    } catch {
-      return fallback;
-    }
-  },
+    set(key: StorageKey, value: string): void {
+        try {
+            localStorage.setItem(key, value);
+        } catch {
+            // storage may be unavailable (private mode, blocked site data)
+        }
+    },
 
-  setJSON(key: string, value: unknown): void {
-    this.set(key, JSON.stringify(value));
-  },
+    getJSON<T>(key: StorageKey, fallback: T): T {
+        try {
+            const v: string | null = storage.get(key);
+            return v ? { ...fallback, ...JSON.parse(v) } : fallback;
+        } catch {
+            return fallback;
+        }
+    },
+
+    setJSON(key: StorageKey, value: unknown): void {
+        storage.set(key, JSON.stringify(value));
+    },
 };
-
-export const StorageKeys = {
-  language: 'kanjiPracticeLang',
-  theme: 'kanjiPracticeTheme',
-  quizPrefs: 'kanjiPracticeQuizPrefs',
-} as const;

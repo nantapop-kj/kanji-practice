@@ -1,18 +1,12 @@
+import { ClientLogLevel } from '@/enums';
+import type { ClientErrorReport, ClientLogBody } from '@/types';
+
 const ClientLogUrl = '/api/v1/client-logs';
 const MaxReportsPerPage = 10;
 const Limits = { message: 2000, stack: 8000, url: 500 } as const;
 
-type ClientLogLevel = 'error' | 'warn';
-
-interface ClientErrorReport {
-    level: ClientLogLevel;
-    message: string;
-    source: string;
-    stack?: string;
-}
-
-let sent = 0;
-const seen = new Set<string>();
+let sent: number = 0;
+const seen: Set<string> = new Set<string>();
 
 export const reportClientError = ({ level, message, source, stack }: ClientErrorReport): void => {
     const key = `${source}|${message}`;
@@ -20,7 +14,7 @@ export const reportClientError = ({ level, message, source, stack }: ClientError
     seen.add(key);
     sent++;
 
-    const body = {
+    const body: ClientLogBody = {
         level,
         source,
         message: message.slice(0, Limits.message),
@@ -34,24 +28,24 @@ export const reportClientError = ({ level, message, source, stack }: ClientError
         credentials: 'include',
         keepalive: true,
         body: JSON.stringify(body),
-    }).catch(() => undefined);
+    }).catch((): undefined => undefined);
 };
 
 const toMessage = (value: unknown): string => (value instanceof Error ? `${value.name}: ${value.message}` : String(value));
 
 export const installGlobalErrorReporting = (): void => {
-    window.addEventListener('error', (e) => {
+    window.addEventListener('error', (e: ErrorEvent): void => {
         reportClientError({
-            level: 'error',
+            level: ClientLogLevel.Error,
             source: 'window.onerror',
             message: e.error ? toMessage(e.error) : e.message || 'Script error',
             stack: e.error instanceof Error ? e.error.stack : `${e.filename}:${e.lineno}:${e.colno}`,
         });
     });
 
-    window.addEventListener('unhandledrejection', (e) => {
+    window.addEventListener('unhandledrejection', (e: PromiseRejectionEvent): void => {
         reportClientError({
-            level: 'error',
+            level: ClientLogLevel.Error,
             source: 'unhandledrejection',
             message: toMessage(e.reason),
             stack: e.reason instanceof Error ? e.reason.stack : undefined,

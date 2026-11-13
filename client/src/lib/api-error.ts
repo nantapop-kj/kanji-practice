@@ -1,35 +1,36 @@
-import type { TFn, TKey } from '@/i18n';
-import { ApiError } from '@/services/http';
+import { ErrorCode } from '@/enums';
+import { ApiError } from '@/services';
+import type { TFn, TKey } from '@/types';
 
-const ErrorCodeKeys: Record<string, TKey> = {
-    INVALID_CREDENTIALS: 'invalidCredentials',
-    EMAIL_TAKEN: 'emailTaken',
-    EMAIL_REQUIRED: 'emailRequired',
-    EMAIL_INVALID: 'emailInvalid',
-    PASSWORD_REQUIRED: 'passwordRequired',
-    PASSWORD_INVALID: 'passwordInvalid',
-    NAME_REQUIRED: 'nameRequired',
-    NAME_INVALID: 'nameInvalid',
-    FORBIDDEN: 'errForbidden',
-    TOO_MANY_REQUESTS: 'errTooManyRequests',
-    WORD_NOT_FOUND: 'errWordNotFound',
-    WORD_EXISTS: 'errWordExists',
-    KANJI_REQUIRED: 'errKanjiRequired',
-    KANJI_INVALID: 'errKanjiInvalid',
-    READING_REQUIRED: 'errReadingRequired',
-    READING_INVALID: 'errReadingInvalid',
-    MEANING_REQUIRED: 'errMeaningRequired',
-    MEANING_INVALID: 'errMeaningInvalid',
-    MEANING_TH_INVALID: 'errMeaningThInvalid',
-    MEANING_EN_INVALID: 'errMeaningEnInvalid',
-    LEVEL_INVALID: 'errLevelInvalid',
-    NOT_ENOUGH_WORDS: 'errNotEnoughWords',
-    NO_MEANING_IN_LANG: 'errNoMeaningInLang',
-    OVERRIDE_DENIED: 'errOverrideDenied',
+const ErrorCodeKeys: Record<ErrorCode, TKey> = {
+    [ErrorCode.InvalidCredentials]: 'invalidCredentials',
+    [ErrorCode.EmailTaken]: 'emailTaken',
+    [ErrorCode.EmailRequired]: 'emailRequired',
+    [ErrorCode.EmailInvalid]: 'emailInvalid',
+    [ErrorCode.PasswordRequired]: 'passwordRequired',
+    [ErrorCode.PasswordInvalid]: 'passwordInvalid',
+    [ErrorCode.NameRequired]: 'nameRequired',
+    [ErrorCode.NameInvalid]: 'nameInvalid',
+    [ErrorCode.Forbidden]: 'errForbidden',
+    [ErrorCode.TooManyRequests]: 'errTooManyRequests',
+    [ErrorCode.WordNotFound]: 'errWordNotFound',
+    [ErrorCode.WordExists]: 'errWordExists',
+    [ErrorCode.KanjiRequired]: 'errKanjiRequired',
+    [ErrorCode.KanjiInvalid]: 'errKanjiInvalid',
+    [ErrorCode.ReadingRequired]: 'errReadingRequired',
+    [ErrorCode.ReadingInvalid]: 'errReadingInvalid',
+    [ErrorCode.MeaningRequired]: 'errMeaningRequired',
+    [ErrorCode.MeaningInvalid]: 'errMeaningInvalid',
+    [ErrorCode.MeaningThInvalid]: 'errMeaningThInvalid',
+    [ErrorCode.MeaningEnInvalid]: 'errMeaningEnInvalid',
+    [ErrorCode.LevelInvalid]: 'errLevelInvalid',
+    [ErrorCode.NotEnoughWords]: 'errNotEnoughWords',
+    [ErrorCode.NoMeaningInLang]: 'errNoMeaningInLang',
+    [ErrorCode.OverrideDenied]: 'errOverrideDenied',
 };
 
 const errorCodeMessage = (code: string | undefined, fallback: string, t: TFn): string => {
-    const key = code ? ErrorCodeKeys[code] : undefined;
+    const key: TKey | undefined = code ? ErrorCodeKeys[code as ErrorCode] : undefined;
 
     return key ? t(key) : fallback;
 };

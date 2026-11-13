@@ -1,4 +1,4 @@
-export type Role = 'user' | 'admin';
+import type { Role } from '@/enums';
 
 export interface User {
     id: string;
@@ -16,4 +16,15 @@ export interface RegisterInput {
 export interface LoginInput {
     email: string;
     password: string;
+}
+
+export interface UserResponse {
+    user: User;
+}
+
+export interface AuthApi {
+    profile: () => Promise<UserResponse>;
+    login: (input: LoginInput) => Promise<UserResponse>;
+    register: (input: RegisterInput) => Promise<UserResponse>;
+    logout: () => Promise<void>;
 }

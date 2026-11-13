@@ -1,29 +1,19 @@
-import { useEffect, useState, type ChangeEvent, type FormEvent } from 'react';
-import { useI18n } from '@/i18n';
-import { apiErrorMessage } from '@/lib/api-error';
-import { DefaultLevel, JlptLevels, type JlptLevel } from '@/lib/levels';
-import { validateWord, type WordFieldErrors } from '@/lib/word-validation';
-import { wordsApi } from '@/services/word.service';
-import type { Word } from '@/types/word';
+import { useEffect, useState, type ChangeEvent, type FormEvent, type JSX } from 'react';
+import { useI18n } from '@/contexts';
+import { DefaultLevel, JlptLevel, JlptLevels } from '@/enums';
+import { apiErrorMessage, validateWord } from '@/lib';
+import { wordsApi } from '@/services';
+import type { FormMessage, Word, WordFieldErrors, WordFormProps, WordFormState, WordInput } from '@/types';
 
-interface WordFormProps {
-    editing: Word | null;
-    onSaved: () => void;
-    onCancel: () => void;
-}
-
-type FormState = { kanji: string; reading: string; meaningsTh: string; meaningsEn: string; level: JlptLevel };
-type Message = { ok: boolean; text: string };
-
-const Empty: FormState = { kanji: '', reading: '', meaningsTh: '', meaningsEn: '', level: DefaultLevel };
+const Empty: WordFormState = { kanji: '', reading: '', meaningsTh: '', meaningsEn: '', level: DefaultLevel };
 
 const splitMeanings = (value: string): string[] =>
     value
         .split(/[/|]/)
-        .map((s) => s.trim())
+        .map((s: string): string => s.trim())
         .filter(Boolean);
 
-const toForm = (word: Word): FormState => ({
+const toForm = (word: Word): WordFormState => ({
     kanji: word.kanji,
     reading: word.reading,
     meaningsTh: word.meaningsTh.join(' / '),
@@ -31,39 +21,39 @@ const toForm = (word: Word): FormState => ({
     level: word.level,
 });
 
-export const WordForm = ({ editing, onSaved, onCancel }: WordFormProps) => {
+export const WordForm = ({ editing, onSaved, onCancel }: WordFormProps): JSX.Element => {
     const { t } = useI18n();
-    const [form, setForm] = useState<FormState>(Empty);
-    const [busy, setBusy] = useState(false);
-    const [message, setMessage] = useState<Message | null>(null);
-    const [submitted, setSubmitted] = useState(false);
+    const [form, setForm] = useState<WordFormState>(Empty);
+    const [busy, setBusy] = useState<boolean>(false);
+    const [message, setMessage] = useState<FormMessage | null>(null);
+    const [submitted, setSubmitted] = useState<boolean>(false);
 
-    useEffect(() => {
+    useEffect((): void => {
         setSubmitted(false);
         if (editing) {
             setMessage(null);
             setForm(toForm(editing));
         } else {
-            setForm((f) => ({ ...Empty, level: f.level }));
+            setForm((f: WordFormState): WordFormState => ({ ...Empty, level: f.level }));
         }
     }, [editing]);
 
     const update =
-        (key: keyof FormState) =>
+        (key: keyof WordFormState) =>
         (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>): void =>
-            setForm((f) => ({ ...f, [key]: e.target.value }));
+            setForm((f: WordFormState): WordFormState => ({ ...f, [key]: e.target.value }));
 
-    const input = {
+    const input: WordInput = {
         kanji: form.kanji.trim(),
         reading: form.reading.trim(),
         meaningsTh: splitMeanings(form.meaningsTh),
         meaningsEn: splitMeanings(form.meaningsEn),
         level: form.level,
     };
-    const fieldErrors = validateWord(input);
+    const fieldErrors: WordFieldErrors = validateWord(input);
     const visibleErrors: WordFieldErrors = submitted ? fieldErrors : {};
 
-    const handleSubmit = async (e: FormEvent) => {
+    const handleSubmit = async (e: FormEvent<HTMLFormElement>): Promise<void> => {
         e.preventDefault();
         setSubmitted(true);
         setMessage(null);
@@ -89,7 +79,12 @@ export const WordForm = ({ editing, onSaved, onCancel }: WordFormProps) => {
     return (
         <>
             <h3 className="card-title">{editing ? t('editWord', { k: editing.kanji }) : t('addWord')}</h3>
-            <form className="form words-form" onSubmit={handleSubmit} autoComplete="off" noValidate>
+            <form
+                className="form words-form"
+                onSubmit={(e: FormEvent<HTMLFormElement>): void => void handleSubmit(e)}
+                autoComplete="off"
+                noValidate
+            >
                 <div className="two">
                     <div className="field">
                         <input
@@ -141,11 +136,13 @@ export const WordForm = ({ editing, onSaved, onCancel }: WordFormProps) => {
                     <label className="field">
                         <span className="lbl">{t('level')}</span>
                         <select className="select" value={form.level} onChange={update('level')}>
-                            {JlptLevels.map((level) => (
-                                <option key={level} value={level}>
-                                    {level}
-                                </option>
-                            ))}
+                            {JlptLevels.map(
+                                (level: JlptLevel): JSX.Element => (
+                                    <option key={level} value={level}>
+                                        {level}
+                                    </option>
+                                ),
+                            )}
                         </select>
                     </label>
                     <div className="row words-form-actions">

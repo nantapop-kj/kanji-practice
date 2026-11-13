@@ -1,9 +1,10 @@
+import type { JSX } from 'react';
 import { Navigate, Outlet } from 'react-router-dom';
-import { PageLoading } from '@/components/PageLoading';
-import { useAuth } from '@/contexts/AuthContext';
-import { Paths } from '@/routes/paths';
+import { PageLoading } from '@/components';
+import { useAuth } from '@/contexts';
+import { Paths } from './paths';
 
-export const GuestRoute = () => {
+export const GuestRoute = (): JSX.Element => {
     const { user, loading } = useAuth();
 
     if (loading) return <PageLoading />;

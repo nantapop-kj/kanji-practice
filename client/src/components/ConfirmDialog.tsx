@@ -1,19 +1,7 @@
-import { useEffect, useRef, type ReactNode } from 'react';
-import { Spinner } from '@/components/Spinner';
+import { useEffect, useRef, type JSX, type MouseEvent, type RefObject, type SyntheticEvent } from 'react';
+import type { ConfirmDialogProps } from '@/types';
+import { Spinner } from './Spinner';
 import './ConfirmDialog.css';
-
-interface ConfirmDialogProps {
-    open: boolean;
-    title: string;
-    children?: ReactNode;
-    confirmLabel: string;
-    cancelLabel: string;
-    busy?: boolean;
-    error?: string;
-    danger?: boolean;
-    onConfirm: () => void;
-    onCancel: () => void;
-}
 
 export const ConfirmDialog = ({
     open,
@@ -26,11 +14,11 @@ export const ConfirmDialog = ({
     danger = false,
     onConfirm,
     onCancel,
-}: ConfirmDialogProps) => {
-    const ref = useRef<HTMLDialogElement>(null);
+}: ConfirmDialogProps): JSX.Element => {
+    const ref: RefObject<HTMLDialogElement | null> = useRef<HTMLDialogElement>(null);
 
-    useEffect(() => {
-        const dialog = ref.current;
+    useEffect((): void => {
+        const dialog: HTMLDialogElement | null = ref.current;
         if (!dialog) return;
         if (open && !dialog.open) dialog.showModal();
         if (!open && dialog.open) dialog.close();
@@ -41,11 +29,11 @@ export const ConfirmDialog = ({
             ref={ref}
             className="confirm-dialog"
             aria-labelledby="confirm-dialog-title"
-            onCancel={(e) => {
+            onCancel={(e: SyntheticEvent<HTMLDialogElement>): void => {
                 e.preventDefault();
                 if (!busy) onCancel();
             }}
-            onClick={(e) => {
+            onClick={(e: MouseEvent<HTMLDialogElement>): void => {
                 if (e.target === e.currentTarget && !busy) onCancel();
             }}
         >

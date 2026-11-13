@@ -1,30 +1,19 @@
-import { useI18n } from '@/i18n';
+import type { ChangeEvent, JSX } from 'react';
+import { useI18n } from '@/contexts';
+import type { PageItem, PaginationProps } from '@/types';
 import './Pagination.css';
-
-interface PaginationProps {
-    page: number;
-    pageSize: number;
-    total: number;
-    totalPages: number;
-    pageSizes: readonly number[];
-    disabled?: boolean;
-    onPageChange: (page: number) => void;
-    onPageSizeChange: (pageSize: number) => void;
-}
-
-type PageItem = number | 'gap';
 
 const SiblingCount = 1;
 
 const pageItems = (page: number, totalPages: number): PageItem[] => {
-    const pages = new Set([1, totalPages]);
+    const pages: Set<number> = new Set<number>([1, totalPages]);
     for (let p = page - SiblingCount; p <= page + SiblingCount; p++) {
         if (p >= 1 && p <= totalPages) pages.add(p);
     }
 
-    const sorted = [...pages].sort((a, b) => a - b);
+    const sorted: number[] = [...pages].sort((a: number, b: number): number => a - b);
     const items: PageItem[] = [];
-    sorted.forEach((p, i) => {
+    sorted.forEach((p: number, i: number): void => {
         if (i > 0 && p - sorted[i - 1] > 1) items.push('gap');
         items.push(p);
     });
@@ -40,10 +29,10 @@ export const Pagination = ({
     disabled = false,
     onPageChange,
     onPageSizeChange,
-}: PaginationProps) => {
+}: PaginationProps): JSX.Element => {
     const { t } = useI18n();
-    const from = total === 0 ? 0 : (page - 1) * pageSize + 1;
-    const to = Math.min(page * pageSize, total);
+    const from: number = total === 0 ? 0 : (page - 1) * pageSize + 1;
+    const to: number = Math.min(page * pageSize, total);
 
     return (
         <nav className="pagination" aria-label={t('pagination')}>
@@ -55,47 +44,50 @@ export const Pagination = ({
                         className="select"
                         value={pageSize}
                         disabled={disabled}
-                        onChange={(e) => onPageSizeChange(Number(e.target.value))}
+                        onChange={(e: ChangeEvent<HTMLSelectElement>): void => onPageSizeChange(Number(e.target.value))}
                     >
-                        {pageSizes.map((size) => (
-                            <option key={size} value={size}>
-                                {size}
-                            </option>
-                        ))}
+                        {pageSizes.map(
+                            (size: number): JSX.Element => (
+                                <option key={size} value={size}>
+                                    {size}
+                                </option>
+                            ),
+                        )}
                     </select>
                 </label>
                 <div className="pagination-pages">
                     <button
                         type="button"
                         className="btn ghost sm"
-                        onClick={() => onPageChange(page - 1)}
+                        onClick={(): void => onPageChange(page - 1)}
                         disabled={disabled || page <= 1}
                         aria-label={t('prevPage')}
                     >
                         ‹
                     </button>
-                    {pageItems(page, totalPages).map((item, i) =>
-                        item === 'gap' ? (
-                            <span key={`gap-${i}`} className="pagination-gap" aria-hidden="true">
-                                …
-                            </span>
-                        ) : (
-                            <button
-                                key={item}
-                                type="button"
-                                className={`btn sm${item === page ? '' : ' ghost'}`}
-                                onClick={() => onPageChange(item)}
-                                disabled={disabled}
-                                aria-current={item === page ? 'page' : undefined}
-                            >
-                                {item}
-                            </button>
-                        ),
+                    {pageItems(page, totalPages).map(
+                        (item: PageItem, i: number): JSX.Element =>
+                            item === 'gap' ? (
+                                <span key={`gap-${i}`} className="pagination-gap" aria-hidden="true">
+                                    …
+                                </span>
+                            ) : (
+                                <button
+                                    key={item}
+                                    type="button"
+                                    className={`btn sm${item === page ? '' : ' ghost'}`}
+                                    onClick={(): void => onPageChange(item)}
+                                    disabled={disabled}
+                                    aria-current={item === page ? 'page' : undefined}
+                                >
+                                    {item}
+                                </button>
+                            ),
                     )}
                     <button
                         type="button"
                         className="btn ghost sm"
-                        onClick={() => onPageChange(page + 1)}
+                        onClick={(): void => onPageChange(page + 1)}
                         disabled={disabled || page >= totalPages}
                         aria-label={t('nextPage')}
                     >

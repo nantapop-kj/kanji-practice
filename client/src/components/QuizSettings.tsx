@@ -1,34 +1,33 @@
-import { LevelPicker } from '@/components/LevelPicker';
-import { Segmented } from '@/components/Segmented';
-import { useI18n } from '@/i18n';
-import type { AnswerMode, QuestionTypeFilter, QuizPrefs } from '@/types/quiz';
-import type { LevelCounts } from '@/types/word';
+import type { ChangeEvent, JSX } from 'react';
+import { useI18n } from '@/contexts';
+import { AnswerMode, JlptLevel, QuestionTypeFilter } from '@/enums';
+import type { QuizSettingsProps } from '@/types';
+import { LevelPicker } from './LevelPicker';
+import { Segmented } from './Segmented';
 
-interface QuizSettingsProps {
-    prefs: QuizPrefs;
-    counts: LevelCounts | null;
-    onChange: (next: Partial<QuizPrefs>) => void;
-}
-
-export const QuizSettings = ({ prefs, counts, onChange }: QuizSettingsProps) => {
+export const QuizSettings = ({ prefs, counts, onChange }: QuizSettingsProps): JSX.Element => {
     const { t } = useI18n();
-    const typing = prefs.mode === 'typing';
+    const typing: boolean = prefs.mode === AnswerMode.Typing;
 
     return (
         <div className="card settings">
             <div className="settings-row">
                 <span className="lbl">{t('level')}</span>
-                <LevelPicker value={prefs.levels} counts={counts} onChange={(levels) => onChange({ levels })} />
+                <LevelPicker
+                    value={prefs.levels}
+                    counts={counts}
+                    onChange={(levels: JlptLevel[]): void => onChange({ levels })}
+                />
             </div>
             <div className="settings-row">
                 <span className="lbl">{t('quizMode')}</span>
                 <Segmented<AnswerMode>
                     label={t('quizMode')}
                     value={prefs.mode}
-                    onChange={(mode) => onChange({ mode })}
+                    onChange={(mode: AnswerMode): void => onChange({ mode })}
                     options={[
-                        { value: 'choice', label: t('modeChoice') },
-                        { value: 'typing', label: t('modeTyping') },
+                        { value: AnswerMode.Choice, label: t('modeChoice') },
+                        { value: AnswerMode.Typing, label: t('modeTyping') },
                     ]}
                 />
             </div>
@@ -36,18 +35,22 @@ export const QuizSettings = ({ prefs, counts, onChange }: QuizSettingsProps) => 
                 <span className="lbl">{t('quizType')}</span>
                 <Segmented<QuestionTypeFilter>
                     label={t('quizType')}
-                    value={typing ? 'mean' : prefs.type}
-                    onChange={(type) => onChange({ type })}
+                    value={typing ? QuestionTypeFilter.Mean : prefs.type}
+                    onChange={(type: QuestionTypeFilter): void => onChange({ type })}
                     options={[
-                        { value: 'mix', label: t('typeMix'), disabled: typing },
-                        { value: 'read', label: t('typeRead'), disabled: typing },
-                        { value: 'mean', label: t('typeMean') },
+                        { value: QuestionTypeFilter.Mix, label: t('typeMix'), disabled: typing },
+                        { value: QuestionTypeFilter.Read, label: t('typeRead'), disabled: typing },
+                        { value: QuestionTypeFilter.Mean, label: t('typeMean') },
                     ]}
                 />
                 {typing && <span className="hint">{t('typingHint')}</span>}
             </div>
             <label className="toggle">
-                <input type="checkbox" checked={prefs.focus} onChange={(e) => onChange({ focus: e.target.checked })} />
+                <input
+                    type="checkbox"
+                    checked={prefs.focus}
+                    onChange={(e: ChangeEvent<HTMLInputElement>): void => onChange({ focus: e.target.checked })}
+                />
                 {t('focusWeak')}
             </label>
         </div>
