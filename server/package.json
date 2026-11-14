@@ -7,6 +7,9 @@
     "prestart": "prisma generate",
     "start": "nodemon --watch src --ext ts --exec tsx src/index.ts"
   },
+  "overrides": {
+    "minimatch": "11.0.1"
+  },
   "license": "ISC",
   "type": "module",
   "dependencies": {
