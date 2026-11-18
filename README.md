@@ -249,6 +249,15 @@ kanji-practice/
 
 ---
 
+## 🤖 AI Assistance
+
+- **UX/UI design:** the page layouts, the quiz and stats screens, the admin pages, and the light and dark themes
+- **Formulas:** the rules in [🧠 Business Rules](#-business-rules), such as the weight for "focus on weak words" and the rule for a weak word
+- **Vocabulary data:** collecting and cleaning the words in `server/prisma/sample-data.sql` from the sources listed in [📚 Vocabulary Data](#-vocabulary-data), and writing the Thai meanings
+- **Translations:** the Thai and English texts in `client/src/i18n/locales/`
+
+---
+
 ## 📄 License
 MIT License for the code. See [LICENSE](LICENSE).
 
