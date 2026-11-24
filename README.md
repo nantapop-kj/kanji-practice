@@ -98,38 +98,6 @@ docker exec -it kanji-practice-server npm start
 docker exec -it kanji-practice-client npm start
 ```
 
-- Web: http://localhost:3000
-- API: http://localhost:3001/api/v1/health
-
-### 4. Make yourself an admin
-Sign up on the website first, then run:
-```bash
-docker exec -it kanji-practice-db psql -U <PG_USER> -d <PG_DATABASE> \
-  -c "UPDATE users SET role = 'admin' WHERE email = 'you@example.com';"
-```
-
-Sign out and sign in again to see the admin tabs.
-
-### Development notes
-- Code changes reload automatically, because `client/` and `server/` are mounted into the containers.
-- After pulling changes that add packages, run `npm ci` inside the container. Its `node_modules` is separate from your machine.
-  ```bash
-  docker exec kanji-practice-server npm ci
-  docker exec kanji-practice-client npm ci
-  ```
-- After editing `server/prisma/schema.prisma`, create a migration:
-  ```bash
-  docker exec -it kanji-practice-server npx prisma migrate dev --name <change-name>
-  ```
-  Do not edit migrations that have already run.
-- Type check:
-  ```bash
-  docker exec kanji-practice-server npx tsc --noEmit -p .
-  docker exec kanji-practice-client npx tsc -b
-  ```
-- Run `git` from the project folder on your machine, not inside a container.
-- The containers run as `root`, so files they create (such as new migrations) belong to `root`. If you cannot remove them on your machine, remove them with `docker exec` or `sudo`.
-
 ---
 
 ## 🔌 API
